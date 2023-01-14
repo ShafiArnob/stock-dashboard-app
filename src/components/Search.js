@@ -21,7 +21,7 @@ const Search = () => {
       <input onChange={(e)=>{setInput(e.target.value)}} onKeyPress={(e)=>{updateBestMatches()}} type="text" value={input} className="w-full px-4 py-2 focus:outline-none rounded-md" placeholder='Search Stock...'/>
     
       {input &&( 
-        <button onClick={clear}>
+        <button onClick={clear} className="m-1">
           <XIcon className="h-4 w-4 fill-gray-500"/>
         </button>)}
 
