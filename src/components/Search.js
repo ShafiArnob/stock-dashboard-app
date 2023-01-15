@@ -1,12 +1,14 @@
 import React, { useContext, useState } from 'react'
 import { mockSearchResults } from '../constants/mock'
-
-import {XIcon, SearchIcon} from "@heroicons/react/solid"
 import SearchResults from './SearchResults'
 import ThemeContext from '../context/ThemeContext'
+import { searchSymbols } from '../api/stock-api'
+
+import {XIcon, SearchIcon} from "@heroicons/react/solid"
+
 const Search = () => {
   const [input, setInput] = useState("")
-  const [bestMatches, setBestMatches] = useState(mockSearchResults.result)
+  const [bestMatches, setBestMatches] = useState([])
   const {darkMode} = useContext(ThemeContext)
 
   const clear = () =>{
@@ -14,13 +16,22 @@ const Search = () => {
     setBestMatches([])
   }
 
-  const updateBestMatches = () => {
-    setBestMatches(mockSearchResults.result)
+  const updateBestMatches = async () => {
+    try{
+      if(input){
+        const searchResults = await searchSymbols(input)
+        const result = searchResults.result
+        setBestMatches(result)
+      }
+    }catch(err){
+      setBestMatches([])
+      console.log(err);
+    }
   }
 
   return (
     <div className={`flex items-center my-4 border-2 rounded-md relative z-50 w-96  ${darkMode?"bg-gray-900 border-gray-800":"bg-white border-neutral-200"}`}>
-      <input onChange={(e)=>{setInput(e.target.value)}} onKeyPress={(e)=>{updateBestMatches()}} type="text" value={input} className={`w-full px-4 py-2 focus:outline-none rounded-md ${darkMode?"bg-gray-900":null}`} placeholder='Search Stock...'/>
+      <input onChange={(e)=>{setInput(e.target.value)}} onKeyPress={(e)=>{if(e.key==="Enter"){updateBestMatches()}}} type="text" value={input} className={`w-full px-4 py-2 focus:outline-none rounded-md ${darkMode?"bg-gray-900":null}`} placeholder='Search Stock...'/>
     
       {input &&( 
         <button onClick={clear} className="m-1">
